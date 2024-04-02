@@ -1,0 +1,5 @@
+[
+	{ "section": ".text", "fbase": 0, "lbase": 19456 },
+	{ "section": ".rodata" },
+	{ "section": ".bootsign", "fbase": 510, "lbase": 19966 }
+]
