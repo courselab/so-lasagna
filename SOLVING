@@ -1,0 +1,16 @@
+Compare 'hw.bin' with 'eg.bin'. Do the outputs match? (They don't necessarily have too).
+Yes, the only difference is the lack of a 0x20, which represents space char in ASCII, because the string used was HelloWorld!, not Hello World!
+
+Disassemble 'hw.bin' and compare the result with 'hw.S'. Does the output (at least approximately) matches 'hw.S'?
+Yes, the disassembled hw.bin lacks directives and labels but that's because the assembly file was first converted to binary.
+
+Boot 'hw.bin' using the 'qemu' emulator. Does it work?
+Yes, the output was HelloWorld!, as expected.
+
+Boot 'hw.bin' in a real piece of hardware. Does it work?
+We didn't have a pen drive nor hardware to boot x86
+
+Test 'hw.S' implementation using the GNU build chain.
+
+
+
