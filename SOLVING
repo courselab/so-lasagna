@@ -11,6 +11,6 @@ Boot 'hw.bin' in a real piece of hardware. Does it work?
 We didn't have a pen drive nor hardware to boot x86
 
 Test 'hw.S' implementation using the GNU build chain.
-
+In qemu the output was HelloWorld!, as expected. The only difference between 'hw.bin' and 'hw2.bin' was the space char.
 
 
