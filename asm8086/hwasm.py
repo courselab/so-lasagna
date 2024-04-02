@@ -3,16 +3,7 @@ import json
 import struct
 import sys
 
-class Symbol:
-    def __init__(self, offset, addend, secname):
-        self.offset = offset
-        self.addend = addend
-        self.secname = secname
-
-class Section:
-    def __init__(self, base):
-        self.base = base
-
+# Relocations.
 class Relocation:
     def __init__(self, label, addend):
         self.label = label
