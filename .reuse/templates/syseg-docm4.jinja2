@@ -1,0 +1,24 @@
+
+{% for copyright_line in copyright_lines %}
+   {{ copyright_line }}
+{% endfor %}
+{% if copyright_lines and spdx_expressions %}
+  
+{% endif %}
+{% for expression in spdx_expressions %}
+   SPDX-License-Identifier: {{ expression }}
+{% endfor %}
+
+   This file is part of SYSeg, available at https://gitlab.com/monaco/syseg.
+
+   >> Usage hint:
+
+      If you're looking for a file such as README or Makefile, then this one 
+      you are reading now is probably not the file you are interested in. This
+      and other files named with suffix '.m4' are source files used by SYSeg
+      to create the actual documentation files, scripts and other items they
+      refer to. If you can't find a corresponding file without the '.m4' name
+      extension in this same directory, then chances are that you have missed
+      the build instructions in the README file at the top of SYSeg's source
+      tree (yep, it's called README for a reason).
+
