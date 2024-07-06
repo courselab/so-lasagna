@@ -162,7 +162,7 @@ void f_list()
 	struct fs_header_t* fs_header = 0x7c00; 
 	int i;
 	struct ponteiro* pointer = 0x7c00 + fs_header->number_of_boot_sectors * 512;
-	kwrite((char*)fs_header->number_of_file_entries);
+	printf(fs_header->number_of_file_entries);
 	for (i=0; i < fs_header->number_of_file_entries; i++)
 	{ 
 		kwrite (pointer->name);
