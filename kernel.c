@@ -33,7 +33,7 @@ struct fs_header_t
 
 struct ponteiro
 {
-	unsigned char name[32];
+	char name[32];
 };
 
 int syscall(int number, int arg1, int arg2, int arg3)
@@ -156,18 +156,29 @@ void f_quit()
   go_on = 0;
 }
 
+void printf(unsigned short i)
+{
+	char str[3];
+	str[0] = i/10+'0';
+	str[1] = i%10+'0';
+	str[2] = '\0';
+	kwrite(str);
+}
+
 void f_list()
 {
 	kwrite("Here are the files:\n");
-	struct fs_header_t* fs_header = 0x7c00; 
-	int i;
-	struct ponteiro* pointer = 0x7c00 + fs_header->number_of_boot_sectors * 512;
-	printf(fs_header->number_of_file_entries);
+	struct fs_header_t* fs_header = (struct fs_header_t*)0x7c00;
+	
+	unsigned short i;
+	struct ponteiro* nome = (struct ponteiro*)((struct ponteiro*) 0x7c00 + fs_header->number_of_boot_sectors * 512);
+puts(nome->name);
 	for (i=0; i < fs_header->number_of_file_entries; i++)
-	{ 
-		kwrite (pointer->name);
-		pointer += 32;
-	  	puts ("\n");
+	{
+		 
+		//if(pointer->name[0]!='\0')
+ //puts(pointer->name);
+		//pointer+=32;
 	}
 }
 /* Built-in shell command: example.
@@ -189,4 +200,3 @@ void f_exec()
 {
   //main();			/* Call the user program's 'main' function. */
 }
-
