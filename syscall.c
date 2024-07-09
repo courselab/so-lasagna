@@ -20,12 +20,12 @@
 
 #define _tycall_ __attribute__((regparm(3) ))
 
+int _tycall_ sys_read(char* buffer)
+{
+  return kread(buffer);
+}
 /* Print a string on the screen. */
 
-int _tycall_ sys_open (const char* str)
-{
-
-}
 
 int _tycall_ sys_write(const char* str)
 {
