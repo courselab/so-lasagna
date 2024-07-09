@@ -15,7 +15,7 @@
            by the bootloader (so as to respect the 512-byte length limit).*/
 	
 	.code16gcc
-	.global kread, udelay, register_syscall_handler, sys_write, sys_open
+	.global kread, udelay, register_syscall_handler, sys_write, sys_read
 	
 	.section .text
 
@@ -122,7 +122,7 @@ syscall_table:
 	.long sys_invalid	/* Syscall 0: invalid.   */
 	.long sys_exit		/* Syscall 1: exit.      */
 	.long sys_write		/* Syscall 2: write      */
-	.long sys_open		/* Syscall 3: open	 */
+	.long sys_read		/* Syscall 3: open	 */
 	/* Read-only data. */
 	
 	.section .rodata
