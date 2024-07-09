@@ -20,6 +20,7 @@ SECTIONS
 	
         .bin :
 	{
+	  crt0.o (.text)
           *.o   (.text .data .bss .rodata) /* Command line objects. */
 	  libtydos.o (.text .data .bss .rodata) /* Runtime library. */
 	}		
