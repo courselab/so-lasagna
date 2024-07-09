@@ -19,7 +19,7 @@
 #	dd if=/dev/zero of=$@ count=2880
 	
 #write_img:
-	#dd if=mdos.bin of=disk.img conv=notrunc seek=1
+	#dd if=mdos.bin of=disk.img conv=notrunc bs=1 seek=62 skip=62
 	
 #.PHONY: write_img	
 
