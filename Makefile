@@ -32,7 +32,7 @@ dos=$(shell basename $$(realpath .))
 
 # Build the OS and an example user program.
 
-all: $(dos).bin prog.bin
+all: $(dos).bin prog.bin hello.bin
 
 # Link all objects needed by the OS.
 
@@ -68,7 +68,7 @@ $(dos).bin : .EXTRA_PREREQS = rt0.o tydos.ld
 progs = prog.bin
 
 $(progs)  : %.bin : %.o libtydos.a 
-	ld -melf_i386 -T prog.ld --orphan-handling=discard $< -o $@
+	ld -melf_i386 -T prog.ld --orphan-handling=discard crt0.o $< libtydos.a -o $@
 
 $(progs:%.bin=%.o) : %.o : %.c tydos.h
 	gcc -m16 -O0 --freestanding -fno-pic -fcf-protection=none -c $(CFLAGS) $< -o $@
@@ -76,6 +76,18 @@ $(progs:%.bin=%.o) : %.o : %.c tydos.h
 $(progs:%.bin=%.o) : tydos.h
 
 $(progs:%.bin=%.o) : .EXTRA_PREREQS = prog.ld
+
+binario = hello.bin
+
+$(binario)  : %.bin : %.o libtydos.a 
+	ld -melf_i386 -T prog.ld --orphan-handling=discard crt0.o $< libtydos.a -o $@
+
+$(binario:%.bin=%.o) : %.o : %.c tydos.h
+	gcc -m16 -O0 --freestanding -fno-pic -fcf-protection=none -c $(CFLAGS) $< -o $@
+
+$(binario:%.bin=%.o) : tydos.h
+
+$(binario:%.bin=%.o) : .EXTRA_PREREQS = tydos.ld
 
 # Recipes to build the user library.
 
@@ -386,7 +398,7 @@ stick: $(IMG)
 
 
 
-EXPORT_FILES = Makefile README bootloader.c kernel.c kernel.h kaux.c kaux.h bios1.S bios1.h bios2.S bios2.h syscall.c tydos.ld  libtydos.c tydos.h tydos.h prog.c prog.ld rt0.S  logo.c
+EXPORT_FILES = Makefile README bootloader.c kernel.c kernel.h kaux.c kaux.h bios1.S bios1.h bios2.S bios2.h syscall.c tydos.ld  libtydos.c tydos.h tydos.h prog.c prog.ld rt0.S  logo.c hello.c
 EXPORT_NEW_FILES = NOTEBOOK
 
 
