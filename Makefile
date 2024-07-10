@@ -59,7 +59,7 @@ bootloader.o : bios1.h kernel.h
 kernel.o : bios1.h bios2.h kernel.h kaux.h   
 kaux.o:    bios2.h kaux.h   
 
-$(dos).bin : .EXTRA_PREREQS = rt0.o tydos.ld
+$(dos).bin : .EXTRA_PREREQS = rt0.o crt0.o tydos.ld
 
 # Rules to build the user programs
 # You would add new programs to this variable if bulding other user programs.
@@ -398,7 +398,7 @@ stick: $(IMG)
 
 
 
-EXPORT_FILES = Makefile README bootloader.c kernel.c kernel.h kaux.c kaux.h bios1.S bios1.h bios2.S bios2.h syscall.c tydos.ld  libtydos.c tydos.h tydos.h prog.c prog.ld rt0.S  logo.c hello.c
+EXPORT_FILES = Makefile README bootloader.c kernel.c kernel.h kaux.c kaux.h bios1.S bios1.h bios2.S bios2.h syscall.c tydos.ld  libtydos.c tydos.h tydos.h prog.c prog.ld rt0.S crt0.S logo.c hello.c
 EXPORT_NEW_FILES = NOTEBOOK
 
 
