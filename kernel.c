@@ -20,7 +20,9 @@
 #include "tydos.h"
 #define DIR_ENTRY_LEN 32 	  /* Max file name length in bytes.           */
 #define FS_SIGLEN 4               /* Signature length.                        */
-
+/* Endereços onde o cabeçalho do sistema de arquivos e o buffer de diretório serão carregados */
+#define FS_HEADER_ADDRESS   0x7C00 
+#define DIR_BUFFER_ADDRESS  0x9000 
 struct fs_header_t
 {
   unsigned char  signature[FS_SIGLEN];    /* The file system signature.              */
@@ -30,11 +32,6 @@ struct fs_header_t
   unsigned short max_file_size;		  /* Maximum size of a file in blocks.       */
   unsigned int unused_space;              /* Remaining space less than max_file_size.*/
 } __attribute__((packed));      /* Disable alignment to preserve offsets.  */
-
-struct ponteiro
-{
-	char name[32];
-};
 
 int syscall(int number, int arg1, int arg2, int arg3)
 {
@@ -138,7 +135,6 @@ struct cmd_t cmds[] =
     {0, 0}
   };
 
-
 /* Build-in shell command: help. */
 
 void f_help()
@@ -169,16 +165,26 @@ void f_list()
 {
 	kwrite("Here are the files:\n");
 	struct fs_header_t* fs_header = (struct fs_header_t*)0x7c00;
-	
+	// Calcula a coordenada inicial do setor da área de diretórios
+  int dir_start_sector = 1 + header->number_of_boot_sectors;
+// Calcula o número de setores a serem lidos para carregar todas as entradas de diretório
+  int dir_sectors_to_read = header->number_of_file_entries * 32 / 512;
+// Ponteiro para o pool de memória onde os dados do diretório serão carregados
+  extern byte _MEM_POOL;
+  void *dir_section_memory = (void *)&_MEM_POOL;
+	// Carrega os setores do disco para a memória
+  LerDisco(dir_start_sector, dir_sectors_to_read, dir_section_memory);
 	unsigned short i;
 	struct ponteiro* nome = (struct ponteiro*)((struct ponteiro*) 0x7c00 + fs_header->number_of_boot_sectors * 512);
-puts(nome->name);
 	for (i=0; i < fs_header->number_of_file_entries; i++)
 	{
-		 
-		//if(pointer->name[0]!='\0')
- //puts(pointer->name);
-		//pointer+=32;
+		 // Obtém o nome do arquivo na posição atual da entrada de diretório
+    char *name = dir_section_memory + i * 32;
+		if(name[0])
+		{
+			puts(name);
+			puts("\n");
+		}
 	}
 }
 /* Built-in shell command: example.
