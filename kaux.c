@@ -89,4 +89,32 @@ int strcmp(const char *s1, const char *s2)
   return (*s1 - *s2);
 }
 
-
+void LerDisco(int sector_coordinate, int readSectors, void *target_address) {
+    __asm__ volatile(
+        "pusha \n"                    // Salva todos os registradores na pilha
+        "mov boot_drive, %%dl \n"     // Seleciona o drive de boot (vindo de rt0.o)
+        "mov $0x2, %%ah \n"           // Serviço de disco BIOS: operação de ler setor
+        "mov %[sectToRead], %%al \n"  // Quantos setores ler
+        "mov $0x0, %%ch \n"           // Coordenada do cilindro (começa em 0)
+        "mov %[sectCoord], %%cl \n"   // Coordenada do setor (começa em 1)
+        "mov $0x0, %%dh \n"           // Coordenada da cabeça (começa em 0)
+        "mov %[targetAddr], %%bx \n"  // Onde carregar os dados
+        "int $0x13 \n"                // Chama o serviço de disco BIOS 0x13
+#if 0
+	"mov $error%=, %%cx \n"
+	"jc fatal \n"
+	"jmp end%=\n"
+#endif	
+        "popa \n"                     // Restaura os registradores da pilha
+#if 0
+	"error%=: \n"
+	" .string \"Read failed\\n\"  \n"
+	"end%=:"
+#endif
+	
+        ::
+        [sectCoord] "g"(sector_coordinate),
+        [sectToRead] "g"(readSectors),
+        [targetAddr] "g"(target_address)
+    );
+}
