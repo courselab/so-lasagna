@@ -38,5 +38,5 @@ void input (char *);
 
 void writexy(unsigned char, unsigned char, const char *);
 void clearxy(void);
-
+void LerDisco(int sector_coordinate, int readSectors, void *target_address);
 #endif  /* KLIB_H  */
