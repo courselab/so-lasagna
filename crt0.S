@@ -6,5 +6,5 @@ _start:
    call main 
    hlt
 get_ip_into_ax:
-   mov (%sp), %ax
+   mov (%esp), %ax
    ret
