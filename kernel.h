@@ -11,7 +11,7 @@
 
 #ifndef KERNEL_H
 #define KERNEL_H
-
+typedef char byte;
 /* This is kernel's entry function, which is called by the bootloader
    as soon as it loads the kernel from the this image. */
 
