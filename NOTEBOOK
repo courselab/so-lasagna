@@ -1,0 +1,60 @@
+Para a funcionalidade de listar os arquivos do sistema é preciso definir, além do header que está en forma de struct na posição 0x7c00, em que posição de memória estão os nomes dos arquivos. Isso é definido pela linha: 
+#define DIR_BUFFER_ADDRESS  0x9000
+
+O setor que contém os nomes dos arquivos está logo depois dos setores de boot, portanto ele é calculado como o número de setores de boot mais um:
+int dir_start_sector = 1 + header->number_of_boot_sectors;
+
+O número de bytes a serem lidos para retornar os nomes de todos os arquivos é o número de possíveis arquivos vezes o tamanho dos nomes, que é 32B: header->number_of_file_entries * 32
+Como cada setor tem 512B, o número de setores é o número de bytes a serem lidos dividido por 512B:
+int dir_sectors_to_read = header->number_of_file_entries * 32 / 512;
+
+Cria-se um ponteiro apontando para uma região de memória em que serão carregados os dados:
+extern byte _MEM_POOL;
+void *dir_section_memory = (void *)&_MEM_POOL;
+
+Criou-se uma função para carregar os setores do disco para a memória, considerando o setor inicial, quantos setores a serem lidos e a região da memória em que serão carregados os dados:
+LerDisco(dir_start_sector, dir_sectors_to_read, dir_section_memory);
+
+Antes de mexer com os registradores, salva-se os valores atuais. 
+Seleciona-se o drive de boot, a operação de ler setor no serviço de disco da BIOS, carrega-se o número de setores a serem lidos, as coordenadas de cilindro, setor e cabeça, onde carregar os dados na memória.
+Finalmente, chama o serviço de disco da BIOS através de int $0x13 e restaura-se os valores dos registradores.
+void LerDisco(int sector_coordinate, int readSectors, void *target_address) {
+    __asm__ volatile(
+        "pusha \n"                    
+        "mov boot_drive, %%dl \n"     
+        "mov $0x2, %%ah \n"           
+        "mov %[sectToRead], %%al \n"  
+        "mov $0x0, %%ch \n"           
+        "mov %[sectCoord], %%cl \n"   
+        "mov $0x0, %%dh \n"           
+        "mov %[targetAddr], %%bx \n"  
+        "int $0x13 \n"                
+#if 0
+	"mov $error%=, %%cx \n"
+	"jc fatal \n"
+	"jmp end%=\n"
+#endif	
+        "popa \n"                     
+#if 0
+	"error%=: \n"
+	" .string \"Read failed\\n\"  \n"
+	"end%=:"
+#endif
+	
+        ::
+        [sectCoord] "g"(sector_coordinate),
+        [sectToRead] "g"(readSectors),
+        [targetAddr] "g"(target_address)
+    );
+}
+
+Para ler os nomes dos arquivos, executamos um laço variando i de 0 ao número de possíveis arquivos, avançando na memória de 32 em 32B, e só imprimimos se o primeiro caracter não for vazio
+for (int entry_index = 0; entry_index < header->number_of_file_entries; entry_index++) 
+{
+  char *entry_name = dir_section_memory + entry_index * 32;
+  if (entry_name[0]) 
+  {
+    kwrite(entry_name);
+    kwrite("\n");
+  }
+}
