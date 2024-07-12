@@ -166,9 +166,9 @@ void f_list()
 	kwrite("Here are the files:\n");
 	struct fs_header_t* fs_header = (struct fs_header_t*)0x7c00;
 	// Calcula a coordenada inicial do setor da área de diretórios
-  int dir_start_sector = 1 + header->number_of_boot_sectors;
+  int dir_start_sector = 1 + fs_header->number_of_boot_sectors;
 // Calcula o número de setores a serem lidos para carregar todas as entradas de diretório
-  int dir_sectors_to_read = header->number_of_file_entries * 32 / 512;
+  int dir_sectors_to_read = fs_header->number_of_file_entries * 32 / 512;
 // Ponteiro para o pool de memória onde os dados do diretório serão carregados
   extern byte _MEM_POOL;
   void *dir_section_memory = (void *)&_MEM_POOL;
