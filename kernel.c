@@ -175,7 +175,7 @@ void f_list()
 	// Carrega os setores do disco para a memória
   LerDisco(dir_start_sector, dir_sectors_to_read, dir_section_memory);
 	unsigned short i;
-	struct ponteiro* nome = (struct ponteiro*)((struct ponteiro*) 0x7c00 + fs_header->number_of_boot_sectors * 512);
+	//struct ponteiro* nome = (struct ponteiro*)((struct ponteiro*) 0x7c00 + fs_header->number_of_boot_sectors * 512);
 	for (i=0; i < fs_header->number_of_file_entries; i++)
 	{
 		 // Obtém o nome do arquivo na posição atual da entrada de diretório
@@ -201,7 +201,7 @@ void f_list()
 
   */
 
-//extern int main();
+extern int main();
 void f_exec()
 {
   //main();			/* Call the user program's 'main' function. */
