@@ -58,3 +58,50 @@ for (int entry_index = 0; entry_index < header->number_of_file_entries; entry_in
     kwrite("\n");
   }
 }
+
+Para a funcionalidade de executar um arquivo no volume, executa-se um laço que percorre todos os nomes dos arquivos, como foi feito na funcionalidade de listar os nomes dos arquivos, com a finalidade de encontrar o nome do arquivo desejado. 
+
+Ao encontrar o arquivo, calcula-se a coordenada do setor como o setor inicial (como foi calculado na funcionalidade anterior), mais o número de setores a serem lidos (como foi calculado na funcionalidade anterior), 
+pois não iremos ler os nomes dos arquivos e sim o arquivo em si, mais i vezes o tamanho máximo de um arquivo, sendo que i é a posição do arquivo desejado dentre os arquivos do volume.
+
+struct fs_header_t *fs_header = get_fs_header();
+
+  int directory_sector_coordinate = 1 + fs_header->number_of_boot_sectors;
+  int sectors_to_read = fs_header->number_of_file_entries * 32 / 512 + 1;
+
+  int memoryOffset = fs_header->number_of_file_entries * 32 - (sectors_to_read - 1) * 512;
+
+  extern byte _MEM_POOL;
+  void *directory_section = (void *)&_MEM_POOL;
+  
+  LerDisco(directory_sector_coordinate, sectors_to_read, directory_section);
+
+for (int i = 0; i < fs_header->number_of_file_entries; i++) {
+    char *file_name = directory_section + i * 32;
+    if (!strcmp(file_name, binary_file_name)) {
+      bin_sector_coordinate = directory_sector_coordinate + sectors_to_read + fs_header->max_file_size * i - 1;
+      break;
+    }
+  }
+  if (bin_sector_coordinate == -1) {
+    kwrite("Program not found.\n");
+    return;
+  }
+
+Então, chamamos a função LerDisco, porém agora a coordenada do setor é a posição em que está o arquivo a ser lido, o número de setores a serem lidos é o tamanho máximo do arquivo (foi dado em número de setores no header), 
+e o endereço de memória que receberá o arquivo é 0xFE00.
+  int memoryOffset = fs_header->number_of_file_entries * 32 - (sectors_to_read - 1) * 512;
+  void *program = (void *)(0xFE00);
+  void *program_sector_start = program - memoryOffset;
+  LerDisco(bin_sector_coordinate, fs_header->max_file_size, program_sector_start);
+
+Com isso, para de fato executarmos o programa, salvamos os valores atuais dos registradores, salvamos o endereço de retorno (para quando finalizar o programa), pulamos para o endereço 0xFE00, que é onde foi carregado o programa.
+Ao retornar do programa, restauramos os valores anteriores dos registradores.
+exec_prog:
+	pusha 
+	pushl $exec_prog_end	/* Push return address. */
+	jmp 0xfe00		/* Jump to program. */
+exec_prog_end:
+	popa
+	ret
+
